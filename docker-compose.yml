@@ -39,6 +39,14 @@ services:
                         dbaddr: redis
                 depends_on:
                         - redis
+        tunnel:
+                image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/tunnel:latest
+                ports:
+                        - "6002:6002"
+                environment:
+                        server: '[0::0]:6002'
+                        crypt: socket5-tunnel-protect
+                        gmailport: 4560
         mysql:
                 image: mariadb:10.3
                 networks:
