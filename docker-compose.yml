@@ -5,10 +5,13 @@ services:
                 ports:
                         - "443:443"
                         - "80:80"
+                volumes:
+                        - wp_content:/home/wwwroot/blog.gotocoding.com/wp-content
                 networks:
                         - frontend
                 depends_on:
                         - php
+                        - rssreader
         php:
                 image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/lnmp-php:latest
                 volumes:
@@ -25,6 +28,17 @@ services:
                         WORDPRESS_DB_PASSWORD: wp
                         WORDPRESS_DB_NAME: wordpress
                         WORDPRESS_DB_PREFIX: wp_
+        rssreader:
+                image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/rssreader:latest
+                volumes:
+                        - ./weixin.conf:/RssReader/server/weixin.conf
+                networks:
+                        - frontend
+                        - backend
+                environment:
+                        dbaddr: redis
+                depends_on:
+                        - redis
         mysql:
                 image: mariadb:10.3
                 networks:
@@ -35,10 +49,19 @@ services:
                         MYSQL_ROOT_PASSWORD: wp
                 volumes:
                         - mysql_data:/var/lib/mysql
+        redis:
+                image: redis:4.0
+                networks:
+                        - backend
+                ports:
+                        - "63790:6379"
+                volumes:
+                        - redis_data:/data
 networks:
         frontend:
         backend:
 
 volumes:
         mysql_data:
+        redis_data:
         wp_content:
