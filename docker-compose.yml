@@ -12,6 +12,8 @@ services:
                 depends_on:
                         - php
                         - rssreader
+                environment:
+                        TZ: Asia/Shanghai
         php:
                 image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/lnmp-php:latest
                 volumes:
@@ -37,6 +39,7 @@ services:
                         - backend
                 environment:
                         dbaddr: redis
+                        TZ: Asia/Shanghai
                 depends_on:
                         - redis
         tunnel:
@@ -47,6 +50,7 @@ services:
                         server: '[0::0]:6002'
                         crypt: socket5-tunnel-protect
                         gmailport: 4560
+                        TZ: Asia/Shanghai
         mysql:
                 image: mariadb:10.3
                 networks:
@@ -55,6 +59,7 @@ services:
                         - "8806:3306"
                 environment:
                         MYSQL_ROOT_PASSWORD: wp
+                        TZ: Asia/Shanghai
                 volumes:
                         - mysql_data:/var/lib/mysql
         redis:
@@ -63,6 +68,8 @@ services:
                         - backend
                 ports:
                         - "63790:6379"
+                environment:
+                        TZ: Asia/Shanghai
                 volumes:
                         - redis_data:/data
 networks:
