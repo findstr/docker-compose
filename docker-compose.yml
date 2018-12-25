@@ -7,18 +7,19 @@ services:
                         - "80:80"
                 volumes:
                         - wp_content:/home/wwwroot/blog.gotocoding.com/wp-content
+                        - letsencrypt:/etc/letsencrypt
                 networks:
                         - frontend
                 depends_on:
                         - php
                         - rssreader
+                        - cardhelper
                 environment:
                         TZ: Asia/Shanghai
         php:
                 image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/lnmp-php:latest
                 volumes:
                         - wp_content:/home/wwwroot/blog.gotocoding.com/wp-content
-                        - ./wp-config.php:/home/wwwroot/blog.gotocoding.com/wp-config.php
                 networks:
                         - frontend
                         - backend
@@ -32,13 +33,28 @@ services:
                         WORDPRESS_DB_PREFIX: wp_
         rssreader:
                 image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/rssreader:latest
-                volumes:
-                        - ./weixin.conf:/RssReader/server/weixin.conf
                 networks:
                         - frontend
                         - backend
                 environment:
                         dbaddr: redis
+                        appid: 'wx738bb0a8533b90b3'
+                        secret: '63cf77f077dfcef07b70d82772e23972'
+                        template: 'FTJ2mbjR493UUepNbuLboKIyxiMK3qHUWY_wkra3avo'
+                        TZ: Asia/Shanghai
+                depends_on:
+                        - redis
+        cardhelper:
+                image: registry.cn-hangzhou.aliyuncs.com/findstr-vps/cardhelper:latest
+                networks:
+                        - frontend
+                        - backend
+                environment:
+                        dbaddr: redis
+                        dbindex: 13
+                        listen:  '[0::0]:9001'
+                        appid: 'wx9b76a8fe5a2faae8'
+                        secret: '132f9f7e091609f8f1f5a22cffded0ac'
                         TZ: Asia/Shanghai
                 depends_on:
                         - redis
@@ -80,3 +96,4 @@ volumes:
         mysql_data:
         redis_data:
         wp_content:
+        letsencrypt:
