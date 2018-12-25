@@ -82,8 +82,6 @@ services:
                 image: redis:4.0
                 networks:
                         - backend
-                ports:
-                        - "63790:6379"
                 environment:
                         TZ: Asia/Shanghai
                 volumes:
